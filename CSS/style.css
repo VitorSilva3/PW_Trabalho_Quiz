@@ -117,3 +117,8 @@ body {
     top: 25vh;
     left: 12.5vw;
 }
+
+button {
+    background-color: var(--corFundo);
+    color: white;
+}

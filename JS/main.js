@@ -52,10 +52,12 @@ function mudarDivs(){
 }
 
 var array;
+var i = -1;
 
 function quizPlay(){
-    for (let i = 0; i < quiz.results.length; i++) {
-        pergunta.innerText = quiz.results[i].question
+    if(i < quiz.results.length){ 
+        i++;
+        pergunta.innerText = quiz.results[i].question;
         
         quiz.results[i].incorrect_answers.push(quiz.results[i].correct_answer);
         array = quiz.results[i].incorrect_answers;
@@ -65,58 +67,48 @@ function quizPlay(){
         var aux2;
 
         while (quantidadeRespostas) {
-  
-            // Pick a remaining element…
+
             aux2 = Math.floor(Math.random() * quantidadeRespostas--);
         
-            // And swap it with the current element.
             aux1 = array[quantidadeRespostas];
             array[quantidadeRespostas] = array[aux2];
             array[aux2] = aux1;
         }
-
+        
         for (let j = 0; j < 4; j++) {
             document.getElementById("resposta"+j).innerHTML = array[j];
             document.getElementById("resposta"+j).addEventListener("click",
-            ()=>{ 
-                if (selecionada.value == quiz.results[i].correct_answer) {
-                    alert("Acertou!");
+            ()=>{    
+                if (document.getElementById("resposta"+j).innerHTML == quiz.results[i].correct_answer) {
+                    document.getElementById("resposta"+j).style.backgroundColor = "green";
+                    incraseTime = setInterval(1000);
+
+                    setTimeout(
+                        ()=>{
+                            document.getElementById("resposta"+j).style.backgroundColor = "var(--corFundo)";
+                           
+                            quizPlay();
+                        },3000);
                 }
                 else{
-                    alert("Errou!");
+                    document.getElementById("resposta"+j).style.backgroundColor = "red";
+                    
+                    for (let k = 0; k < 4; k++) {
+                        if (array[k] == quiz.results[i].correct_answer) {
+                            document.getElementById("resposta"+k).style.backgroundColor = "green"; 
+                        }
+                        incraseTime = setInterval(1000);
+
+                        setTimeout(
+                            ()=>{
+                                document.getElementById("resposta"+k).style.backgroundColor = "var(--corFundo)";
+                                document.getElementById("resposta"+j).style.backgroundColor = "var(--corFundo)";
+
+                                quizPlay();
+                            },3000);
+                    }
                 }
-            });
-        }
-        
-        incraseTime = setInterval(1000)
-
-        setTimeout(
-            ()=>{}
-            ,10000
-        );
-    }
-}  
-
-/* -- Misturar valores de um array --
-var array = ["Marega", "Manafa", "Luiz", "Taremi"];
-
-function shuffle(array) {
-    var m = array.length;
-    var t;
-    var i;
-  
-    // While there remain elements to shuffle…
-    while (m) {
-  
-      // Pick a remaining element…
-      i = Math.floor(Math.random() * m--);
-  
-      // And swap it with the current element.
-      t = array[m];
-      array[m] = array[i];
-      array[i] = t;
-    }
-  
-    return array;
+            })
+        } 
+    }   
 }
-*/
