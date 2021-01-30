@@ -113,12 +113,35 @@ body {
     background-color: var(--corFundo);
     width: 75vw;
     height: 50vh;
+    border: 2px solid black;
+    border-radius: 1vw;
     position: absolute;
     top: 25vh;
     left: 12.5vw;
+    padding: 1vw;
+}
+
+.scorBoard {
+    width: 20vw;
+    height: 50vh;
+}
+
+.quiz {
+    width: 53vw;
+    height: 50vh;
 }
 
 button {
     background-color: var(--corFundo);
     color: white;
+    width: 10vw;
+    height: 5vh;
 }
+
+.pontuacaoJogador {
+    display: flex;
+}
+
+.pontuacaoJogador:last-child {
+    text-align: right;
+} 

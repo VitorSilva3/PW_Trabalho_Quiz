@@ -4,25 +4,63 @@ var btnStart = document.getElementById("btnJogar");
 var quiz;
 var quizDiv = document.getElementById("quizGeral");
 var pergunta = document.getElementById("pergunta");
+var d = new Date();
+d.setTime(d.getTime() + (9 * 24 * 60 * 60 * 1000));
 
+//adicionar evento click ao botão para ativar a função mudarDivs
 btnStart.addEventListener("click", mudarDivs);
 
-function mudarDivs(){
+//vai mudar as divs e fazer a ligação ao API com a dificuldade escolhida
+function mudarDivs() {
     if (nomeJoga.value == "") {
         alert("Tem de inserir o seu nome");
     }
     else {
         document.getElementById("inicial").style.display = "none";
+        document.getElementById("nomeJogadorScore").innerText = nomeJoga.value;
     }
-
+    // 
     if (nvDifi.value == "facil") {
-        alert("não disponivel versao facil");
+        var request = new XMLHttpRequest()
+        request.open('GET', 'https://opentdb.com/api.php?amount=10&category=27&difficulty=easy&type=multiple', true)
+        request.onload = function () {
+            var data = JSON.parse(this.response);
+            if (request.status >= 200 && request.status < 400) {
+                quiz = data;
+            }
+            else {
+                alert(request.status)
+            }
+        }
+        request.send();
     }
     else if (nvDifi.value == "medio") {
-        alert("não disponivel versao medio");
+        var request = new XMLHttpRequest()
+        request.open('GET', 'https://opentdb.com/api.php?amount=10&category=27&difficulty=medium&type=multiple', true)
+        request.onload = function () {
+            var data = JSON.parse(this.response);
+            if (request.status >= 200 && request.status < 400) {
+                quiz = data;
+            }
+            else {
+                alert(request.status)
+            }
+        }
+        request.send();
     }
     else if (nvDifi.value == "dificil") {
-        alert("não disponivel versao dificil");
+        var request = new XMLHttpRequest()
+        request.open('GET', 'https://opentdb.com/api.php?amount=10&category=27&difficulty=hard&type=multiple', true)
+        request.onload = function () {
+            var data = JSON.parse(this.response);
+            if (request.status >= 200 && request.status < 400) {
+                quiz = data;
+            }
+            else {
+                alert(request.status)
+            }
+        }
+        request.send();
     }
     else if (nvDifi.value == "misturado") {
         var request = new XMLHttpRequest()
@@ -39,28 +77,60 @@ function mudarDivs(){
         request.send();
     }
 
-    incraseTime = setInterval(1000)
+    incraseTime = setInterval(1000);
 
     setTimeout(
-        ()=>{quizPlay();
-            quizDiv.style.display = "block";
+        () => {
+            quizPlay();
+            scoresJogadores();
         }
-        ,3000
+        , 1500
     );
-
-    quizDiv.style.display = "block";
+    clearInterval(incraseTime);
+    quizDiv.style.display = "flex";
 }
 
-var array;
-var i = -1;
+var cookieVal = document.cookie.split(";")
+var cookieBiDemensional = [];
+cookieVal.forEach(element => {
+    element= element.split("=");
+    cookieBiDemensional.push(element);
+});
 
-function quizPlay(){
-    if(i < quiz.results.length){ 
-        i++;
-        pergunta.innerText = quiz.results[i].question;
+
+function scoresJogadores() {
+
+    cookieBiDemensional.forEach(element => {
+        console.log(element);
         
-        quiz.results[i].incorrect_answers.push(quiz.results[i].correct_answer);
-        array = quiz.results[i].incorrect_answers;
+            var v = document.createElement("h5");
+            v.innerHTML = element[0] + ": " + element[1];
+            document.getElementById("scoreBoard").append(v);
+        
+    });
+
+
+}
+
+var respostas;
+var i = 0;
+var scoreJogador = 0;
+
+document.getElementById("scoreJogador").innerHTML = scoreJogador;
+
+var bta = document.querySelectorAll("button")[1];
+var btb = document.querySelectorAll("button")[2];
+var btc = document.querySelectorAll("button")[3];
+var btd = document.querySelectorAll("button")[4];
+
+
+function quizPlay() {
+    if (i < 10) {
+        contadorTempo("start");
+        console.log(i);
+
+        respostas = quiz.results[i].incorrect_answers;
+        respostas.push(quiz.results[i].correct_answer);
 
         var quantidadeRespostas = 4;
         var aux1;
@@ -69,46 +139,168 @@ function quizPlay(){
         while (quantidadeRespostas) {
 
             aux2 = Math.floor(Math.random() * quantidadeRespostas--);
-        
-            aux1 = array[quantidadeRespostas];
-            array[quantidadeRespostas] = array[aux2];
-            array[aux2] = aux1;
+
+            aux1 = respostas[quantidadeRespostas];
+            respostas[quantidadeRespostas] = respostas[aux2];
+            respostas[aux2] = aux1;
         }
-        
-        for (let j = 0; j < 4; j++) {
-            document.getElementById("resposta"+j).innerHTML = array[j];
-            document.getElementById("resposta"+j).addEventListener("click",
-            ()=>{    
-                if (document.getElementById("resposta"+j).innerHTML == quiz.results[i].correct_answer) {
-                    document.getElementById("resposta"+j).style.backgroundColor = "green";
-                    incraseTime = setInterval(1000);
 
-                    setTimeout(
-                        ()=>{
-                            document.getElementById("resposta"+j).style.backgroundColor = "var(--corFundo)";
-                           
-                            quizPlay();
-                        },3000);
-                }
-                else{
-                    document.getElementById("resposta"+j).style.backgroundColor = "red";
-                    
-                    for (let k = 0; k < 4; k++) {
-                        if (array[k] == quiz.results[i].correct_answer) {
-                            document.getElementById("resposta"+k).style.backgroundColor = "green"; 
-                        }
-                        incraseTime = setInterval(1000);
+        bta.innerHTML = respostas[0];
+        btb.innerHTML = respostas[1];
+        btc.innerHTML = respostas[2];
+        btd.innerHTML = respostas[3];
 
-                        setTimeout(
-                            ()=>{
-                                document.getElementById("resposta"+k).style.backgroundColor = "var(--corFundo)";
-                                document.getElementById("resposta"+j).style.backgroundColor = "var(--corFundo)";
+        bta.addEventListener("click", respostaSelecionada);
+        btb.addEventListener("click", respostaSelecionada);
+        btc.addEventListener("click", respostaSelecionada);
+        btd.addEventListener("click", respostaSelecionada);
 
-                                quizPlay();
-                            },3000);
-                    }
-                }
-            })
-        } 
-    }   
+        var j = i + 1;
+        pergunta.innerText = j + " - " + quiz.results[i].question;
+
+        tempoLimite("start");
+
+    }
+    else {
+        console.log("acabou!");
+        document.cookie = nomeJoga.value+"="+scoreJogador+";" +"expires="+ d.toUTCString();
+    }
+}
+
+var tempo = 0;
+function contadorTempo(metodo) {
+    if (metodo == "start") {
+        incraseTime1 = setInterval(
+            () => {
+                tempo++;
+                document.getElementById("contador").innerHTML = tempo;
+            },
+            1000
+        )
+    }
+    else {
+        clearInterval(incraseTime1);
+        tempo = 0;
+        document.getElementById("contador").innerHTML = tempo;
+    }
+}
+
+function respostaSelecionada(event) {
+
+    console.log(event.target.innerHTML);
+    contadorTempo("pause");
+    tempoLimite("pause");
+    if (event.target.innerHTML == quiz.results[i].correct_answer) {
+        scoreJogador = scoreJogador + 10;
+        document.getElementById("scoreJogador").innerHTML = scoreJogador;
+
+        event.target.style.backgroundColor = "green";
+
+        setTimeout(() => {
+            event.target.style.backgroundColor = "var(--corFundo)";
+            i++;
+            quizPlay();
+        }, 2000);
+    }
+    else {
+        event.target.style.backgroundColor = "red";
+
+        switch (quiz.results[i].correct_answer) {
+            case respostas[0]:
+                bta.style.backgroundColor = "green";
+
+                setTimeout(() => {
+                    event.target.style.backgroundColor = "var(--corFundo)";
+                    bta.style.backgroundColor = "var(--corFundo)";
+                    i++;
+                    quizPlay();
+                }, 2000);
+                break;
+            case respostas[1]:
+                btb.style.backgroundColor = "green";
+
+                setTimeout(() => {
+                    event.target.style.backgroundColor = "var(--corFundo)";
+                    btb.style.backgroundColor = "var(--corFundo)";
+                    i++;
+                    quizPlay();
+                }, 2000);
+                break;
+            case respostas[2]:
+                btc.style.backgroundColor = "green";
+
+                setTimeout(() => {
+                    event.target.style.backgroundColor = "var(--corFundo)";
+                    btc.style.backgroundColor = "var(--corFundo)";
+                    i++;
+                    quizPlay();
+                }, 2000);
+                break;
+            case respostas[3]:
+                btd.style.backgroundColor = "green";
+
+                setTimeout(() => {
+                    event.target.style.backgroundColor = "var(--corFundo)";
+                    btd.style.backgroundColor = "var(--corFundo)";
+                    i++;
+                    quizPlay();
+                }, 2000);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+var limiteCor;
+var limiteVisi;
+
+function tempoLimite(metodo) {
+    if (metodo == "start") {
+        limiteCor = setTimeout(() => {
+
+            switch (quiz.results[i].correct_answer) {
+                case respostas[0]:
+                    bta.style.backgroundColor = "green";
+
+                    setTimeout(() => {
+                        bta.style.backgroundColor = "var(--corFundo)";
+                    }, 3000);
+                    break;
+                case respostas[1]:
+                    btb.style.backgroundColor = "green";
+
+                    setTimeout(() => {
+                        btb.style.backgroundColor = "var(--corFundo)";
+                    }, 3000);
+                    break;
+                case respostas[2]:
+                    btc.style.backgroundColor = "green";
+
+                    setTimeout(() => {
+                        btc.style.backgroundColor = "var(--corFundo)";
+                    }, 3000);
+                    break;
+                case respostas[3]:
+                    btd.style.backgroundColor = "green";
+
+                    setTimeout(() => {
+                        btd.style.backgroundColor = "var(--corFundo)";
+                    }, 3000);
+                    break;
+                default:
+                    break;
+            }
+            contadorTempo("pause");
+        }, 10000);
+
+        limiteVisi = setTimeout(() => {
+            i++;
+            quizPlay();
+        }, 13000);
+    }
+    else {
+        clearTimeout(limiteCor);
+        clearTimeout(limiteVisi);
+    }
 }
