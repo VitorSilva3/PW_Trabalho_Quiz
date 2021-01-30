@@ -30,24 +30,32 @@
             </div>
         </div>
         <div id="quizGeral" class="quizGeral">
-            <div class="scoreBoard">
+            <div class="scoreBoard" id="scoreBoardDiv">
                 <h3>TOP Pontuações</h3>
                 <div id="scoreBoard">
                 </div>
             </div>
-            <div class="quiz">
+            <div class="quiz" id="quiz">
                 <h2 id="pergunta"></h2>
                 <button id="resposta0"></button>
                 <button id="resposta1"></button>
                 <button id="resposta2"></button>
                 <button id="resposta3"></button>
                 <div class="pontuacaoJogador">
-                    <h3 id="nomeJogadorScore"></h3>
-                    <p id="scoreJogador"></p>
-                    <div>
+                    <div class="dadosJogador">
+                        <h3 id="nomeJogadorScore"></h3>
+                        <p id="scoreJogador"></p>
+                    </div>
+                    <div class="contador">
                         <h1 id="contador">0</h1>  
                     </div>
                 </div>
+            </div>
+            <div class="resultadoJogador" id="resultadoJogador">
+                <hr>
+                <h4>Teu resultado</h4>
+                <h3 id="nomeJogadorScore1"></h3>
+                <p id="scoreJogador1"></p>
             </div>
         </div>
     </div>

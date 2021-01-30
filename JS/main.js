@@ -18,6 +18,8 @@ function mudarDivs() {
     else {
         document.getElementById("inicial").style.display = "none";
         document.getElementById("nomeJogadorScore").innerText = nomeJoga.value;
+        //mudamos o tipo de display da div para flex, alterando o display none no css
+        quizDiv.style.display = "flex";
     }
     // 
     if (nvDifi.value == "facil") {
@@ -87,7 +89,6 @@ function mudarDivs() {
         , 1500
     );
     clearInterval(incraseTime);
-    quizDiv.style.display = "flex";
 }
 
 var cookieVal = document.cookie.split(";")
@@ -99,17 +100,14 @@ cookieVal.forEach(element => {
 
 
 function scoresJogadores() {
-
+    cookieBiDemensional = cookieBiDemensional.sort(function(a, b){return b[1] - a[1]});
     cookieBiDemensional.forEach(element => {
-        console.log(element);
         
             var v = document.createElement("h5");
             v.innerHTML = element[0] + ": " + element[1];
             document.getElementById("scoreBoard").append(v);
         
     });
-
-
 }
 
 var respostas;
@@ -127,7 +125,6 @@ var btd = document.querySelectorAll("button")[4];
 function quizPlay() {
     if (i < 10) {
         contadorTempo("start");
-        console.log(i);
 
         respostas = quiz.results[i].incorrect_answers;
         respostas.push(quiz.results[i].correct_answer);
@@ -162,8 +159,17 @@ function quizPlay() {
 
     }
     else {
-        console.log("acabou!");
         document.cookie = nomeJoga.value+"="+scoreJogador+";" +"expires="+ d.toUTCString();
+        document.getElementById("scoreBoardDiv").style.width = "75vw";
+        document.getElementById("scoreBoardDiv").style.height = "35vh";
+        document.getElementById("scoreBoardDiv").style.border = "0px";
+        document.getElementById("scoreBoardDiv").style.textAlign = "center";
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("resultadoJogador").style.display = "block"; 
+        document.getElementById("scoreBoard").style.height = "25vh";
+
+        document.getElementById("nomeJogadorScore1").innerHTML = nomeJoga.value;
+        document.getElementById("scoreJogador1").innerHTML = scoreJogador;
     }
 }
 
@@ -187,7 +193,7 @@ function contadorTempo(metodo) {
 
 function respostaSelecionada(event) {
 
-    console.log(event.target.innerHTML);
+    removerClickBt();
     contadorTempo("pause");
     tempoLimite("pause");
     if (event.target.innerHTML == quiz.results[i].correct_answer) {
@@ -291,6 +297,7 @@ function tempoLimite(metodo) {
                 default:
                     break;
             }
+            removerClickBt();
             contadorTempo("pause");
         }, 10000);
 
@@ -303,4 +310,11 @@ function tempoLimite(metodo) {
         clearTimeout(limiteCor);
         clearTimeout(limiteVisi);
     }
+}
+
+function removerClickBt() {
+    bta.removeEventListener("click", respostaSelecionada);
+    btb.removeEventListener("click", respostaSelecionada);
+    btc.removeEventListener("click", respostaSelecionada);
+    btd.removeEventListener("click", respostaSelecionada);
 }
